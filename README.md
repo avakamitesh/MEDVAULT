@@ -1,4 +1,4 @@
-# MedVault 🏥
+# MedVault 
 ### Emergency Medical Bridge for First Responders
 
 > Built for **BuildVerse 2026** · LNCT Group of Colleges, Bhopal  
