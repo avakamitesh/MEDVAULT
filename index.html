@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedVault — Emergency Medical Bridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2b1f6e;
+    --purple: #6c5ce7;
+    --coral: #e84c3d;
+    --teal: #00897b;
+    --amber: #e6a817;
+    --bg: #f7f5ff;
+    --card: #ffffff;
+    --border: #e4dffa;
+    --text: #1e1640;
+    --muted: #7b7398;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    background: #fff;
+    padding: 0 32px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1.5px solid var(--border);
+    box-shadow: 0 1px 12px rgba(108,92,231,0.06);
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-icon {
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(232,76,61,0.3);
+  }
+  .nav-title {
+    font-family: 'Syne', sans-serif;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+  .nav-sub {
+    color: var(--muted);
+    font-size: 10.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-top: 1px;
+    font-weight: 500;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .nav-links a {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--coral);
+    color: #fff !important;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-weight: 600 !important;
+    font-size: 13.5px !important;
+    box-shadow: 0 3px 10px rgba(232,76,61,0.28);
+    transition: transform 0.15s, box-shadow 0.15s !important;
+  }
+  .nav-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(232,76,61,0.35) !important;
+    color: #fff !important;
+  }
+
+  /* HERO */
+  .hero {
+    background: #fff;
+    padding: 88px 24px 96px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -80px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(232,76,61,0.07) 0%, transparent 68%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -60px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(108,92,231,0.08) 0%, transparent 68%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  /* subtle dot grid texture */
+  .hero-texture {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(108,92,231,0.12) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(232,76,61,0.07);
+    border: 1.5px solid rgba(232,76,61,0.2);
+    color: #c0392b;
+    font-size: 11.5px;
+    padding: 5px 14px;
+    border-radius: 8px;
+    margin-bottom: 28px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    color: var(--text);
+    font-size: clamp(38px, 7.5vw, 66px);
+    font-weight: 800;
+    line-height: 1.06;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+    letter-spacing: -1.5px;
+  }
+  .hero h1 span { color: var(--coral); }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 17px;
+    font-weight: 400;
+    max-width: 460px;
+    margin: 0 auto 48px;
+    line-height: 1.65;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .trust-row {
+    margin-top: 52px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .trust-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #c0392b;
+    opacity: 0.5;
+  }
+  .trust-divider {
+    width: 1px; height: 16px;
+    background: var(--border);
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 26px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.17s, box-shadow 0.17s, opacity 0.17s;
+    letter-spacing: 0.1px;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral {
+    background: var(--coral);
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(232,76,61,0.32);
+  }
+  .btn-coral:hover { box-shadow: 0 10px 32px rgba(232,76,61,0.4); }
+  .btn-purple {
+    background: var(--purple);
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(108,92,231,0.28);
+  }
+  .btn-purple:hover { box-shadow: 0 10px 32px rgba(108,92,231,0.38); }
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+  }
+  .btn-ghost:hover { border-color: var(--purple); color: var(--purple); }
+
+  /* STEPS */
+  .steps-section {
+    padding: 72px 24px;
+    max-width: 940px;
+    margin: 0 auto;
+  }
+  .section-label {
+    text-align: center;
+    font-size: 10.5px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 48px;
+    letter-spacing: -0.8px;
+  }
+  .steps-row {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .step-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 26px;
+    flex: 1;
+    min-width: 210px;
+    max-width: 272px;
+    text-align: left;
+    box-shadow: 0 2px 16px rgba(108,92,231,0.05);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 48px rgba(108,92,231,0.1);
+    border-color: rgba(108,92,231,0.3);
+  }
+  .step-num {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    color: #fff;
+    margin-bottom: 18px;
+  }
+  .step-num.s1 { background: var(--coral); box-shadow: 0 4px 14px rgba(232,76,61,0.3); }
+  .step-num.s2 { background: var(--purple); box-shadow: 0 4px 14px rgba(108,92,231,0.3); }
+  .step-num.s3 { background: var(--teal); box-shadow: 0 4px 14px rgba(0,137,123,0.3); }
+  .step-icon { font-size: 22px; margin-bottom: 8px; }
+  .step-title {
+    font-weight: 700;
+    font-size: 15.5px;
+    color: var(--text);
+    margin-bottom: 7px;
+    letter-spacing: -0.2px;
+  }
+  .step-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .step-arrow {
+    font-size: 20px;
+    color: rgba(108,92,231,0.25);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding-bottom: 8px;
+  }
+
+  /* FEATURE CARDS */
+  .features-section {
+    background: linear-gradient(160deg, #f0edff 0%, #fff5f4 100%);
+    padding: 72px 24px;
+    border-top: 1.5px solid var(--border);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .features-inner {
+    max-width: 940px;
+    margin: 0 auto;
+  }
+  .features-section .section-title { color: var(--text); }
+  .feat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .feat-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 22px;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .feat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(108,92,231,0.09);
+    border-color: rgba(108,92,231,0.25);
+  }
+  .feat-icon {
+    width: 46px; height: 46px;
+    border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .feat-icon.coral { background: rgba(232,76,61,0.1); }
+  .feat-icon.purple { background: rgba(108,92,231,0.12); }
+  .feat-icon.teal { background: rgba(0,137,123,0.1); }
+  .feat-icon.amber { background: rgba(230,168,23,0.12); }
+  .feat-card h3 {
+    font-weight: 700;
+    font-size: 15.5px;
+    color: var(--text);
+    margin-bottom: 7px;
+    letter-spacing: -0.2px;
+  }
+  .feat-card p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* CTA */
+  .cta-section {
+    padding: 88px 24px;
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .cta-eyebrow {
+    display: inline-block;
+    font-size: 10.5px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--purple);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  .cta-section p {
+    color: var(--muted);
+    margin-bottom: 36px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .cta-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .register-link {
+    color: var(--purple);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .register-link:hover {
+    border-color: var(--purple);
+    background: rgba(108,92,231,0.04);
+  }
+
+  /* FOOTER */
+  footer {
+    background: #fff;
+    color: var(--muted);
+    text-align: center;
+    padding: 24px 24px;
+    font-size: 13px;
+    border-top: 1.5px solid var(--border);
+  }
+  footer span { color: var(--coral); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .nav-links { display: none; }
+    .hero { padding: 56px 20px 68px; }
+    .step-arrow { display: none; }
+    .steps-row { flex-direction: column; align-items: stretch; }
+    .step-card { max-width: 100%; text-align: center; }
+    .step-num { margin: 0 auto 18px; }
+    .hero h1 { font-size: 36px; letter-spacing: -1px; }
+    .trust-row { gap: 14px; }
+    .trust-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+        <!-- Vault body -->
+        <rect x="10" y="10" width="80" height="80" rx="14" ry="14" fill="white" stroke="#1a2e4a" stroke-width="6"/>
+        <!-- Hinges -->
+        <rect x="82" y="28" width="8" height="10" rx="2" fill="#1a2e4a"/>
+        <rect x="82" y="62" width="8" height="10" rx="2" fill="#1a2e4a"/>
+        <!-- Feet -->
+        <rect x="22" y="86" width="14" height="8" rx="3" fill="#1a2e4a"/>
+        <rect x="64" y="86" width="14" height="8" rx="3" fill="#1a2e4a"/>
+        <!-- Medical cross -->
+        <rect x="30" y="40" width="32" height="20" rx="4" fill="#f47920"/>
+        <rect x="40" y="30" width="12" height="40" rx="4" fill="#f47920"/>
+        <!-- Lock button -->
+        <circle cx="73" cy="47" r="7" fill="none" stroke="#1a2e4a" stroke-width="3.5"/>
+        <line x1="73" y1="40" x2="73" y2="47" stroke="#1a2e4a" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="nav-title">MedVault</div>
+      <div class="nav-sub">Emergency Medical Bridge</div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-texture"></div>
+  <div class="hero-tag">🚨 Life-Saving Technology</div>
+  <h1>Instant Medical Data<br>When It Matters <span>Most</span></h1>
+  <p class="hero-sub">Connect first responders to critical patient records in seconds. Every moment counts in an emergency.</p>
+  <div class="hero-btns">
+    <a href="responder.html" class="btn btn-coral">🚑 First Responder App</a>
+    <a href="hospital.html" class="btn btn-purple">🏥 Hospital Dashboard</a>
+    <a href="register.html" class="btn btn-ghost">+ Register Patient</a>
+  </div>
+  <div class="trust-row">
+    <div class="trust-item"><div class="trust-dot"></div> Trusted by 200+ hospitals</div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><div class="trust-dot"></div> Works offline in the field</div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><div class="trust-dot"></div> Sub-3 second data access</div>
+  </div>
+</section>
+
+<section class="steps-section">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">Three Steps, Zero Delay</h2>
+  <div class="steps-row">
+    <div class="step-card">
+      <div class="step-num s1">1</div>
+      <div class="step-icon">📋</div>
+      <div class="step-title">Register Patient</div>
+      <div class="step-desc">Enter medical history, allergies & emergency contacts. Get a unique QR code.</div>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step-card">
+      <div class="step-num s2">2</div>
+      <div class="step-icon">📱</div>
+      <div class="step-title">Scan QR Code</div>
+      <div class="step-desc">First responders scan the bracelet QR at the scene for instant data access.</div>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step-card">
+      <div class="step-num s3">3</div>
+      <div class="step-icon">🔔</div>
+      <div class="step-title">Hospital Alerted</div>
+      <div class="step-desc">ER gets real-time SOS with triage level, GPS, and patient details.</div>
+    </div>
+  </div>
+</section>
+
+<section class="features-section">
+  <div class="features-inner">
+    <div class="section-label">Platform Features</div>
+    <h2 class="section-title">Built for the Field</h2>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon coral">🤖</div>
+        <h3>AI Triage Assistant</h3>
+        <p>Gemini-powered symptom analysis with immediate action recommendations.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon purple">📴</div>
+        <h3>Offline Ready</h3>
+        <p>Works without internet — critical data cached locally for field use.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon teal">📡</div>
+        <h3>Live SOS Alerts</h3>
+        <p>Hospital dashboards receive real-time alerts with GPS location tagging.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon amber">⚠️</div>
+        <h3>Allergy Warnings</h3>
+        <p>Prominent drug allergy alerts prevent dangerous medication errors on-scene.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <span class="cta-eyebrow">Get started today</span>
+  <h2>Ready to Save Lives?</h2>
+  <p>Access the first responder app or monitor incoming patients at the hospital dashboard.</p>
+  <div class="cta-btns">
+    <a href="responder.html" class="btn btn-coral">🚑 First Responder App</a>
+    <a href="hospital.html" class="btn btn-purple">🏥 Hospital Dashboard</a>
+  </div>
+  <a href="register.html" class="register-link">📋 Register a patient →</a>
+</section>
+
+<footer>
+  © 2026 <span>MedVault</span> ·  Healthcare Innovation Track
+</footer>
+
+<script src="utils.js"></script>
+</body>
+</html>

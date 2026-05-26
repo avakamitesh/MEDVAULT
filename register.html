@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedVault — Register Patient</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --navy: #2b1f6e;
+    --purple: #6c5ce7;
+    --coral: #e84c3d;
+    --teal: #00897b;
+    --amber: #e6a817;
+    --bg: #f7f5ff;
+    --card: #ffffff;
+    --border: #e4dffa;
+    --text: #1e1640;
+    --muted: #7b7398;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  nav {
+    background: #fff;
+    padding: 0 28px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1.5px solid var(--border);
+    box-shadow: none;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .nav-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #e84c3d 0%, #c0392b 100%);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(232,76,61,0.3);
+  }
+  .nav-title {
+    font-family: 'Syne', sans-serif;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
+  .back-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .back-link:hover { border-color: var(--purple); color: var(--purple); }
+
+  .page-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 36px 20px 60px;
+  }
+  .page-header {
+    margin-bottom: 32px;
+  }
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: -0.8px;
+  }
+  .page-header p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 2px 16px rgba(108,92,231,0.05);
+    margin-bottom: 20px;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover {
+    box-shadow: 0 8px 32px rgba(108,92,231,0.08);
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.2px;
+  }
+  .card-title span {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .card-title span.coral { background: rgba(232,76,61,0.1); }
+  .card-title span.purple { background: rgba(108,92,231,0.1); }
+  .card-title span.teal { background: rgba(0,137,123,0.1); }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .form-group.full { grid-column: 1 / -1; }
+  label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(108,92,231,0.1);
+  }
+  input::placeholder { color: #bbb7d4; }
+  select { cursor: pointer; }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .input-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--coral);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 6px 24px rgba(232,76,61,0.3);
+  }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(232,76,61,0.4); }
+  .submit-btn:active { transform: translateY(0); }
+
+  /* QR Result */
+  #qr-result { display: none; }
+  .qr-success {
+    background: linear-gradient(135deg, #f0fdf9, #e0faf4);
+    border: 1.5px solid rgba(0,137,123,0.25);
+    border-radius: 20px;
+    padding: 36px;
+    text-align: center;
+  }
+  .qr-success-icon { font-size: 36px; margin-bottom: 12px; }
+  .qr-success h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--teal);
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .qr-id {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  #qrcode {
+    display: inline-block;
+    padding: 18px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(0,137,123,0.28);
+  }
+  .download-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,137,123,0.35); }
+
+  /* Patient list */
+  .patients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .patient-mini {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .patient-mini:hover {
+    border-color: var(--purple);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(108,92,231,0.1);
+  }
+  .pm-avatar {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--navy), var(--purple));
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 11px;
+  }
+  .pm-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 3px;
+    letter-spacing: -0.2px;
+  }
+  .pm-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 9px;
+  }
+  .pm-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .pm-status.critical { background: rgba(232,76,61,0.1); color: var(--coral); }
+  .pm-status.stable { background: rgba(0,137,123,0.1); color: var(--teal); }
+  .pm-status.urgent { background: rgba(230,168,23,0.12); color: var(--amber); }
+
+  @media (max-width: 520px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .card { padding: 20px; }
+    nav { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+        <!-- Vault body -->
+        <rect x="10" y="10" width="80" height="80" rx="14" ry="14" fill="white" stroke="#1a2e4a" stroke-width="6"/>
+        <!-- Hinges -->
+        <rect x="82" y="28" width="8" height="10" rx="2" fill="#1a2e4a"/>
+        <rect x="82" y="62" width="8" height="10" rx="2" fill="#1a2e4a"/>
+        <!-- Feet -->
+        <rect x="22" y="86" width="14" height="8" rx="3" fill="#1a2e4a"/>
+        <rect x="64" y="86" width="14" height="8" rx="3" fill="#1a2e4a"/>
+        <!-- Medical cross -->
+        <rect x="30" y="40" width="32" height="20" rx="4" fill="#f47920"/>
+        <rect x="40" y="30" width="12" height="40" rx="4" fill="#f47920"/>
+        <!-- Lock button -->
+        <circle cx="73" cy="47" r="7" fill="none" stroke="#1a2e4a" stroke-width="3.5"/>
+        <line x1="73" y1="40" x2="73" y2="47" stroke="#1a2e4a" stroke-width="3" stroke-linecap="round"/>
+      </svg></div>
+    <div class="nav-title">MedVault</div>
+  </div>
+  <a href="index.html" class="back-link">← Back</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>📋 Register a Patient</h1>
+    <p>Complete the form to create a patient profile and generate their emergency QR code.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="coral">👤</span> Personal Information</div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Full Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Rajesh Kumar" required/>
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="f-age" placeholder="e.g. 42" min="0" max="120"/>
+      </div>
+      <div class="form-group">
+        <label>Blood Type</label>
+        <select id="f-blood">
+          <option value="">Select blood type</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>O+</option><option>O-</option>
+          <option>AB+</option><option>AB-</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="purple">💊</span> Medical Information</div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Allergies</label>
+        <input type="text" id="f-allergies" placeholder="e.g. Penicillin, Sulfa drugs"/>
+        <div class="input-hint">Separate multiple allergies with commas</div>
+      </div>
+      <div class="form-group full">
+        <label>Current Medications</label>
+        <input type="text" id="f-medications" placeholder="e.g. Metformin 500mg, Amlodipine 5mg"/>
+        <div class="input-hint">Separate multiple medications with commas</div>
+      </div>
+      <div class="form-group full">
+        <label>Medical Conditions</label>
+        <input type="text" id="f-conditions" placeholder="e.g. Type 2 Diabetes, Hypertension"/>
+        <div class="input-hint">Separate multiple conditions with commas</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="teal">📞</span> Emergency Contact</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Contact Name</label>
+        <input type="text" id="f-emname" placeholder="e.g. Sunita Kumar"/>
+      </div>
+      <div class="form-group">
+        <label>Contact Phone</label>
+        <input type="tel" id="f-emphone" placeholder="e.g. 9876543210"/>
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="handleRegister()">
+    🔲 Generate QR Code
+  </button>
+
+  <div id="qr-result" style="margin-top:24px;">
+    <div class="qr-success">
+      <div class="qr-success-icon">✅</div>
+      <h3>Patient Registered!</h3>
+      <div class="qr-id" id="qr-patient-id">ID: MV-XXXX</div>
+      <div id="qrcode"></div>
+      <br>
+      <button class="download-btn" onclick="downloadQR()">⬇️ Download QR Code</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:36px;">
+    <div class="card-title"><span class="coral">🗂️</span> Registered Patients</div>
+    <div class="patients-grid" id="patients-list"></div>
+  </div>
+</div>
+
+<script src="utils.js"></script>
+<script>
+  let currentQRCanvas = null;
+
+  function handleRegister() {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name) { alert('Please enter patient name.'); return; }
+    const id = generateId();
+    const allergiesRaw = document.getElementById('f-allergies').value.trim();
+    const medsRaw = document.getElementById('f-medications').value.trim();
+    const condsRaw = document.getElementById('f-conditions').value.trim();
+    const patient = {
+      id, name,
+      age: parseInt(document.getElementById('f-age').value) || 0,
+      blood: document.getElementById('f-blood').value || 'Unknown',
+      allergies: allergiesRaw ? allergiesRaw.split(',').map(s=>s.trim()).join('|') : 'None',
+      medications: medsRaw ? medsRaw.split(',').map(s=>s.trim()).join('|') : 'None',
+      conditions: condsRaw ? condsRaw.split(',').map(s=>s.trim()).join('|') : 'None',
+      emergency: (document.getElementById('f-emname').value.trim() || 'N/A') + ' - ' + (document.getElementById('f-emphone').value.trim() || 'N/A'),
+      status: 'stable'
+    };
+    savePatient(patient);
+    document.getElementById('qr-result').style.display = 'block';
+    document.getElementById('qr-patient-id').textContent = 'ID: ' + id + ' · ' + name;
+    const qrDiv = document.getElementById('qrcode');
+    qrDiv.innerHTML = '';
+    const qr = new QRCode(qrDiv, {
+      text: id,
+      width: 200,
+      height: 200,
+      colorDark: '#2b1f6e',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    setTimeout(() => { currentQRCanvas = qrDiv.querySelector('canvas'); }, 300);
+    setTimeout(() => {
+      document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+    loadPatients();
+  }
+
+  function downloadQR() {
+    if (!currentQRCanvas) {
+      const canvas = document.querySelector('#qrcode canvas');
+      if (!canvas) { alert('QR not ready yet, try again in a moment.'); return; }
+      currentQRCanvas = canvas;
+    }
+    const idText = document.getElementById('qr-patient-id').textContent.replace(/[^a-zA-Z0-9-]/g, '_');
+    const link = document.createElement('a');
+    link.download = 'MedVault_QR_' + idText + '.png';
+    link.href = currentQRCanvas.toDataURL('image/png');
+    link.click();
+  }
+
+  function loadPatients() {
+    const patients = getAllPatients();
+    const container = document.getElementById('patients-list');
+    container.innerHTML = '';
+    patients.forEach(p => {
+      const initials = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const div = document.createElement('div');
+      div.className = 'patient-mini';
+      div.innerHTML = `
+        <div class="pm-avatar">${initials}</div>
+        <div class="pm-name">${p.name}</div>
+        <div class="pm-meta">${p.age} yrs · Blood: ${p.blood}</div>
+        <span class="pm-status ${p.status}">${p.status.toUpperCase()}</span>
+      `;
+      container.appendChild(div);
+    });
+  }
+  loadPatients();
+</script>
+</body>
+</html>

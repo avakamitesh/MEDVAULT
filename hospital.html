@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedVault — Hospital Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2b1f6e;
+    --purple: #6c5ce7;
+    --coral: #e84c3d;
+    --teal: #00897b;
+    --amber: #e6a817;
+    --bg: #f7f5ff;
+    --card: #ffffff;
+    --border: #e4dffa;
+    --text: #1e1640;
+    --muted: #7b7398;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  nav {
+    background: #fff;
+    padding: 0 28px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: none;
+    border-bottom: 1.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-left { display: flex; align-items: center; gap: 12px; }
+  .nav-icon {
+    width: 38px; height: 38px;
+    background: var(--purple);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(108,92,231,0.28);
+  }
+  .nav-title {
+    font-family: 'Syne', sans-serif;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.2px;
+  }
+  .nav-sub {
+    color: var(--muted);
+    font-size: 10.5px;
+    letter-spacing: 0.8px;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .nav-clock {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* ALERT BANNER */
+  #alert-banner {
+    display: none;
+    background: linear-gradient(135deg, var(--coral), #c0392b);
+    color: #fff;
+    padding: 14px 24px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+  }
+  #alert-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    to { left: 100%; }
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* STAT CARDS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 16px rgba(108,92,231,0.05);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .stat-card:hover {
+    box-shadow: 0 8px 32px rgba(108,92,231,0.1);
+    transform: translateY(-2px);
+  }
+  .stat-icon {
+    width: 50px; height: 50px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .stat-icon.purple { background: rgba(108,92,231,0.1); }
+  .stat-icon.coral { background: rgba(232,76,61,0.1); }
+  .stat-icon.teal { background: rgba(0,137,123,0.1); }
+  .stat-label {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .stat-value.coral { color: var(--coral); }
+  .stat-value.teal { color: var(--teal); }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  /* ALERT CARDS */
+  .alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .alert-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 2px 16px rgba(108,92,231,0.05);
+    animation: slideIn 0.4s ease;
+    transition: box-shadow 0.2s;
+  }
+  .alert-card:hover {
+    box-shadow: 0 8px 32px rgba(108,92,231,0.09);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .alert-card.new-alert {
+    border-color: var(--coral);
+    box-shadow: 0 4px 24px rgba(232,76,61,0.15);
+  }
+  .alert-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .alert-avatar {
+    width: 50px; height: 50px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--navy), var(--purple));
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .alert-patient-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+    margin-bottom: 3px;
+    letter-spacing: -0.2px;
+  }
+  .alert-meta {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .meta-blood {
+    background: rgba(232,76,61,0.1);
+    color: var(--coral);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+  .triage-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 5px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .triage-badge.critical { background: var(--coral); color: #fff; }
+  .triage-badge.urgent { background: var(--amber); color: #fff; }
+  .triage-badge.stable { background: var(--teal); color: #fff; }
+
+  .alert-allergies { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .allergy-pill {
+    background: rgba(232,76,61,0.08);
+    border: 1.5px solid rgba(232,76,61,0.2);
+    color: var(--coral);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .alert-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .alert-gps {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .alert-eta {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--amber);
+    background: rgba(230,168,23,0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  .accept-btn {
+    padding: 10px 20px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 4px 14px rgba(0,137,123,0.28);
+  }
+  .accept-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,137,123,0.35); }
+
+  /* BED GRID */
+  .bed-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .bed-box {
+    border-radius: 14px;
+    padding: 16px 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
+  .bed-box:hover { transform: translateY(-2px); }
+  .bed-box.free {
+    background: rgba(0,137,123,0.07);
+    border: 1.5px solid rgba(0,137,123,0.18);
+    color: var(--teal);
+  }
+  .bed-box.occupied {
+    background: rgba(232,76,61,0.07);
+    border: 1.5px solid rgba(232,76,61,0.18);
+    color: var(--coral);
+  }
+  .bed-icon { font-size: 20px; margin-bottom: 4px; }
+  .bed-label { font-size: 12px; font-weight: 700; }
+  .bed-status-text { font-size: 10px; opacity: 0.65; margin-top: 2px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 44px 20px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1.5px dashed var(--border);
+    border-radius: 16px;
+  }
+  .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-state p { font-size: 14px; }
+
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .bed-grid { grid-template-columns: repeat(3, 1fr); }
+    nav { padding: 0 16px; }
+    .nav-sub { display: none; }
+  }
+  @media (max-width: 400px) {
+    .bed-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+        <!-- Vault body -->
+        <rect x="10" y="10" width="80" height="80" rx="14" ry="14" fill="white" stroke="#1a2e4a" stroke-width="6"/>
+        <!-- Hinges -->
+        <rect x="82" y="28" width="8" height="10" rx="2" fill="#1a2e4a"/>
+        <rect x="82" y="62" width="8" height="10" rx="2" fill="#1a2e4a"/>
+        <!-- Feet -->
+        <rect x="22" y="86" width="14" height="8" rx="3" fill="#1a2e4a"/>
+        <rect x="64" y="86" width="14" height="8" rx="3" fill="#1a2e4a"/>
+        <!-- Medical cross -->
+        <rect x="30" y="40" width="32" height="20" rx="4" fill="#f47920"/>
+        <rect x="40" y="30" width="12" height="40" rx="4" fill="#f47920"/>
+        <!-- Lock button -->
+        <circle cx="73" cy="47" r="7" fill="none" stroke="#1a2e4a" stroke-width="3.5"/>
+        <line x1="73" y1="40" x2="73" y2="47" stroke="#1a2e4a" stroke-width="3" stroke-linecap="round"/>
+      </svg></div>
+    <div class="nav-brand-text">
+      <div class="nav-title">MedVault</div>
+      <div class="nav-sub">AIIMS Bhopal — Emergency Department</div>
+    </div>
+  </div>
+  <div class="nav-clock" id="live-clock">--:--:--</div>
+</nav>
+
+<div id="alert-banner">🚨 NEW EMERGENCY INCOMING — <span id="alert-banner-text">Patient Name — CRITICAL</span></div>
+
+<div class="page-wrap">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon purple">👥</div>
+      <div>
+        <div class="stat-label">Incoming Patients</div>
+        <div class="stat-value" id="stat-incoming">2</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon coral">🔴</div>
+      <div>
+        <div class="stat-label">Critical Priority</div>
+        <div class="stat-value coral" id="stat-critical">1</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon teal">🛏️</div>
+      <div>
+        <div class="stat-label">Beds Available</div>
+        <div class="stat-value teal" id="stat-beds">8</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOMING ALERTS -->
+  <div class="section-title">🚨 Incoming Alerts</div>
+  <div class="alerts-list" id="alerts-list"></div>
+
+  <!-- BED GRID -->
+  <div class="section-title">🛏️ Bed Availability</div>
+  <div class="bed-grid" id="bed-grid"></div>
+
+</div>
+
+<script src="utils.js"></script>
+<script>
+  let bedsAvailable = 8;
+  let incomingCount = 0;
+  let criticalCount = 0;
+  let lastAlertTs = 0;
+  let alertBannerTimer = null;
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('live-clock').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  const occupiedBeds = new Set([3, 7]);
+  function renderBeds() {
+    const grid = document.getElementById('bed-grid');
+    grid.innerHTML = '';
+    for (let i = 1; i <= 12; i++) {
+      const isOccupied = occupiedBeds.has(i);
+      const div = document.createElement('div');
+      div.className = 'bed-box ' + (isOccupied ? 'occupied' : 'free');
+      div.id = 'bed-' + i;
+      div.innerHTML = `
+        <div class="bed-icon">${isOccupied ? '🔴' : '🟢'}</div>
+        <div class="bed-label">Bed ${i}</div>
+        <div class="bed-status-text">${isOccupied ? 'Occupied' : 'Available'}</div>
+      `;
+      grid.appendChild(div);
+    }
+  }
+  renderBeds();
+
+  function markBedOccupied() {
+    for (let i = 1; i <= 12; i++) {
+      if (!occupiedBeds.has(i)) {
+        occupiedBeds.add(i);
+        renderBeds();
+        bedsAvailable = Math.max(0, bedsAvailable - 1);
+        document.getElementById('stat-beds').textContent = bedsAvailable;
+        return;
+      }
+    }
+  }
+
+  function updateStats() {
+    document.getElementById('stat-incoming').textContent = incomingCount;
+    document.getElementById('stat-critical').textContent = criticalCount;
+    document.getElementById('stat-beds').textContent = bedsAvailable;
+  }
+
+  function createAlertCard(data, isNew) {
+    const initials = (data.patientName || 'UN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const level = (data.triageLevel || 'STABLE').toLowerCase();
+    const allergies = data.allergies && data.allergies !== 'None' ? data.allergies.split('|') : [];
+    const gpsText = data.lat ? `📍 ${parseFloat(data.lat).toFixed(4)}, ${parseFloat(data.lng).toFixed(4)}` : '📍 Location unavailable';
+
+    const div = document.createElement('div');
+    div.className = 'alert-card' + (isNew ? ' new-alert' : '');
+    div.innerHTML = `
+      <div class="alert-top">
+        <div class="alert-avatar">${initials}</div>
+        <div style="flex:1;">
+          <div class="alert-patient-name">${data.patientName || 'Unknown Patient'}</div>
+          <div class="alert-meta">
+            <span>${data.patientAge || '—'} yrs</span>
+            <span class="meta-blood">🩸 ${data.blood || '—'}</span>
+            <span>${data.conditions && data.conditions !== 'None' ? data.conditions.replace(/\|/g, ', ') : 'No conditions'}</span>
+          </div>
+        </div>
+        <span class="triage-badge ${level}">${data.triageLevel || 'STABLE'}</span>
+      </div>
+      ${allergies.length ? `<div class="alert-allergies">${allergies.map(a=>`<span class="allergy-pill">⚠️ ${a}</span>`).join('')}</div>` : ''}
+      <div class="alert-footer">
+        <span class="alert-gps">${gpsText}</span>
+        <span class="alert-eta">🕒 ETA ~9 min</span>
+        <button class="accept-btn" onclick="acceptPatient(this, '${level}')">✅ Accept Patient</button>
+      </div>
+    `;
+    return div;
+  }
+
+  function acceptPatient(btn, level) {
+    const card = btn.closest('.alert-card');
+    incomingCount = Math.max(0, incomingCount - 1);
+    if (level === 'critical') criticalCount = Math.max(0, criticalCount - 1);
+    markBedOccupied();
+    updateStats();
+    card.style.transition = 'opacity 0.4s, transform 0.4s';
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(30px)';
+    setTimeout(() => card.remove(), 400);
+    checkEmpty();
+  }
+
+  function checkEmpty() {
+    const list = document.getElementById('alerts-list');
+    setTimeout(() => {
+      if (list.querySelectorAll('.alert-card').length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">✅</div>
+            <p>No incoming alerts — all patients processed</p>
+          </div>
+        `;
+      }
+    }, 450);
+  }
+
+  function preloadDemoAlerts() {
+    const list = document.getElementById('alerts-list');
+    const demo1 = {
+      patientName: 'Rajesh Kumar', patientAge: 42, blood: 'B+',
+      allergies: 'Penicillin|Sulfa drugs',
+      conditions: 'Type 2 Diabetes|Hypertension',
+      triageLevel: 'CRITICAL', lat: 23.2599, lng: 77.4126
+    };
+    const demo2 = {
+      patientName: 'Arjun Mehta', patientAge: 58, blood: 'A+',
+      allergies: 'Aspirin',
+      conditions: 'Hypertension|Atrial Fibrillation',
+      triageLevel: 'URGENT', lat: 23.2619, lng: 77.4139
+    };
+    list.appendChild(createAlertCard(demo1, false));
+    list.appendChild(createAlertCard(demo2, false));
+    incomingCount = 2;
+    criticalCount = 1;
+    updateStats();
+  }
+  preloadDemoAlerts();
+
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      gain.gain.value = 0.4;
+      osc.start();
+      gain.gain.setTargetAtTime(0, ctx.currentTime + 0.1, 0.1);
+      setTimeout(() => { osc.stop(); ctx.close(); }, 400);
+    } catch(e) {}
+  }
+
+  setInterval(() => {
+    const alert = getAlert();
+    if (!alert) return;
+    if (alert.seen || alert.ts <= lastAlertTs) return;
+    lastAlertTs = alert.ts;
+    alert.seen = true;
+    localStorage.setItem('mv_alert', JSON.stringify(alert));
+    const banner = document.getElementById('alert-banner');
+    document.getElementById('alert-banner-text').textContent =
+      `${alert.patientName || 'Unknown'} — ${alert.triageLevel || 'UNKNOWN'}`;
+    banner.style.display = 'block';
+    if (alertBannerTimer) clearTimeout(alertBannerTimer);
+    alertBannerTimer = setTimeout(() => { banner.style.display = 'none'; }, 8000);
+    playBeep();
+    const list = document.getElementById('alerts-list');
+    const emptyState = list.querySelector('.empty-state');
+    if (emptyState) emptyState.remove();
+    const card = createAlertCard(alert, true);
+    list.prepend(card);
+    incomingCount++;
+    if ((alert.triageLevel || '').toUpperCase() === 'CRITICAL') criticalCount++;
+    updateStats();
+  }, 2000);
+</script>
+</body>
+</html>
