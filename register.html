@@ -294,7 +294,34 @@
   .pm-status.critical { background: rgba(232,76,61,0.1); color: var(--coral); }
   .pm-status.stable { background: rgba(0,137,123,0.1); color: var(--teal); }
   .pm-status.urgent { background: rgba(230,168,23,0.12); color: var(--amber); }
-
+   label.required::after {
+    content: ' *';
+    color: var(--coral);
+    font-weight: 700;
+  }
+  input.error, select.error {
+    border-color: var(--coral) !important;
+    box-shadow: 0 0 0 3px rgba(232,76,61,0.12) !important;
+    background: #fff8f7;
+  }
+  .error-msg {
+    font-size: 11px;
+    color: var(--coral);
+    font-weight: 600;
+    margin-top: 2px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+  .error-msg.visible { display: flex; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  .shake { animation: shake 0.38s ease; }
   @media (max-width: 520px) {
     .form-grid { grid-template-columns: 1fr; }
     .form-group.full { grid-column: 1; }
@@ -338,15 +365,17 @@
     <div class="card-title"><span class="coral">👤</span> Personal Information</div>
     <div class="form-grid">
       <div class="form-group full">
-        <label>Full Name</label>
-        <input type="text" id="f-name" placeholder="e.g. Rajesh Kumar" required/>
-      </div>
-      <div class="form-group">
-        <label>Age</label>
+        <label class="required">Full Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Rajesh Kumar"/>
+        <div class="error-msg" id="err-name">⚠ Full name is required
+
+        </div>
+
+      <label class="required">Age</label>
         <input type="number" id="f-age" placeholder="e.g. 42" min="0" max="120"/>
-      </div>
-      <div class="form-group">
-        <label>Blood Type</label>
+        <div class="error-msg" id="err-age">⚠ Valid age (0–120) is required</div>
+
+      <label class="required">Blood Type</label>
         <select id="f-blood">
           <option value="">Select blood type</option>
           <option>A+</option><option>A-</option>
@@ -354,7 +383,7 @@
           <option>O+</option><option>O-</option>
           <option>AB+</option><option>AB-</option>
         </select>
-      </div>
+        <div class="error-msg" id="err-blood">⚠ Please select a blood type</div>
     </div>
   </div>
 
@@ -387,9 +416,9 @@
         <input type="text" id="f-emname" placeholder="e.g. Sunita Kumar"/>
       </div>
       <div class="form-group">
-        <label>Contact Phone</label>
-        <input type="tel" id="f-emphone" placeholder="e.g. 9876543210"/>
-      </div>
+       <label class="required">Contact Name</label>
+        <input type="text" id="f-emname" placeholder="e.g. Sunita Kumar"/>
+        <div class="error-msg" id="err-emname">⚠ Emergency contact name is required</div>
     </div>
   </div>
 
@@ -416,23 +445,59 @@
 
 <script src="utils.js"></script>
 <script>
-  let currentQRCanvas = null;
+ let currentQRCanvas = null;
+
+  function setError(fieldId, errId, show) {
+    const el = document.getElementById(fieldId);
+    const msg = document.getElementById(errId);
+    if (show) { el.classList.add('error'); msg.classList.add('visible'); }
+    else { el.classList.remove('error'); msg.classList.remove('visible'); }
+    return show;
+  }
+
+  ['f-name','f-age','f-blood','f-emname','f-emphone'].forEach((id, i) => {
+    const errIds = ['err-name','err-age','err-blood','err-emname','err-emphone'];
+    const el = document.getElementById(id);
+    el.addEventListener('input',  () => setError(id, errIds[i], false));
+    el.addEventListener('change', () => setError(id, errIds[i], false));
+  });
 
   function handleRegister() {
-    const name = document.getElementById('f-name').value.trim();
-    if (!name) { alert('Please enter patient name.'); return; }
+    const name   = document.getElementById('f-name').value.trim();
+    const age    = parseInt(document.getElementById('f-age').value);
+    const blood  = document.getElementById('f-blood').value;
+    const emname = document.getElementById('f-emname').value.trim();
+    const emphone= document.getElementById('f-emphone').value.trim();
+
+    let valid = true;
+    if (setError('f-name',    'err-name',    !name))                                 valid = false;
+    if (setError('f-age',     'err-age',     isNaN(age)||age<0||age>120))            valid = false;
+    if (setError('f-blood',   'err-blood',   !blood))                                valid = false;
+    if (setError('f-emname',  'err-emname',  !emname))                               valid = false;
+    if (setError('f-emphone', 'err-emphone', !/^\+?[\d\s\-]{7,15}$/.test(emphone))) valid = false;
+
+    if (!valid) {
+      const btn = document.querySelector('.submit-btn');
+      btn.classList.remove('shake');
+      void btn.offsetWidth;
+      btn.classList.add('shake');
+      btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+      document.querySelector('.error').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     const id = generateId();
     const allergiesRaw = document.getElementById('f-allergies').value.trim();
     const medsRaw = document.getElementById('f-medications').value.trim();
     const condsRaw = document.getElementById('f-conditions').value.trim();
     const patient = {
       id, name,
-      age: parseInt(document.getElementById('f-age').value) || 0,
-      blood: document.getElementById('f-blood').value || 'Unknown',
+      age: age,
+      blood: blood,
       allergies: allergiesRaw ? allergiesRaw.split(',').map(s=>s.trim()).join('|') : 'None',
       medications: medsRaw ? medsRaw.split(',').map(s=>s.trim()).join('|') : 'None',
       conditions: condsRaw ? condsRaw.split(',').map(s=>s.trim()).join('|') : 'None',
-      emergency: (document.getElementById('f-emname').value.trim() || 'N/A') + ' - ' + (document.getElementById('f-emphone').value.trim() || 'N/A'),
+      emergency: emname + ' - ' + emphone,
       status: 'stable'
     };
     savePatient(patient);
