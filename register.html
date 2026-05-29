@@ -367,15 +367,15 @@
       <div class="form-group full">
         <label class="required">Full Name</label>
         <input type="text" id="f-name" placeholder="e.g. Rajesh Kumar"/>
-        <div class="error-msg" id="err-name">⚠ Full name is required
-
-        </div>
-
-      <label class="required">Age</label>
+        <div class="error-msg" id="err-name">⚠ Full name is required</div>
+      </div>
+      <div class="form-group">
+        <label class="required">Age</label>
         <input type="number" id="f-age" placeholder="e.g. 42" min="0" max="120"/>
         <div class="error-msg" id="err-age">⚠ Valid age (0–120) is required</div>
-
-      <label class="required">Blood Type</label>
+      </div>
+      <div class="form-group">
+        <label class="required">Blood Type</label>
         <select id="f-blood">
           <option value="">Select blood type</option>
           <option>A+</option><option>A-</option>
@@ -384,6 +384,7 @@
           <option>AB+</option><option>AB-</option>
         </select>
         <div class="error-msg" id="err-blood">⚠ Please select a blood type</div>
+      </div>
     </div>
   </div>
 
@@ -412,13 +413,15 @@
     <div class="card-title"><span class="teal">📞</span> Emergency Contact</div>
     <div class="form-grid">
       <div class="form-group">
-        <label>Contact Name</label>
-        <input type="text" id="f-emname" placeholder="e.g. Sunita Kumar"/>
-      </div>
-      <div class="form-group">
-       <label class="required">Contact Name</label>
+        <label class="required">Contact Name</label>
         <input type="text" id="f-emname" placeholder="e.g. Sunita Kumar"/>
         <div class="error-msg" id="err-emname">⚠ Emergency contact name is required</div>
+      </div>
+      <div class="form-group">
+        <label class="required">Contact Phone</label>
+        <input type="tel" id="f-emphone" placeholder="e.g. +91 98765 43210"/>
+        <div class="error-msg" id="err-emphone">⚠ Valid phone number is required</div>
+      </div>
     </div>
   </div>
 
@@ -443,7 +446,21 @@
   </div>
 </div>
 
-<script src="utils.js"></script>
+<script>
+  // Inline utils (fallback in case utils.js is not available)
+  function generateId() {
+    return 'MV-' + Math.random().toString(36).substr(2,4).toUpperCase() + Date.now().toString(36).toUpperCase().slice(-3);
+  }
+  function savePatient(patient) {
+    const patients = getAllPatients();
+    patients.unshift(patient);
+    localStorage.setItem('medvault_patients', JSON.stringify(patients));
+  }
+  function getAllPatients() {
+    try { return JSON.parse(localStorage.getItem('medvault_patients') || '[]'); }
+    catch(e) { return []; }
+  }
+</script>
 <script>
  let currentQRCanvas = null;
 
